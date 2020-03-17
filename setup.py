@@ -29,7 +29,7 @@ setup(
         "Pillow",
         "gym",
         "stable-baselines",
-        "tensorflow==1.14",
+        "tensorflow==1.15.2",
         "black",
         "networkx",
         "flask",
