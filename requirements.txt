@@ -1,0 +1,17 @@
+simpy
+xmltodict
+Pillow
+pytest
+pytest-cov
+flask
+flask-cors
+gym
+stable-baselines
+tensorflow==1.14.0
+networkx
+black
+toml
+pathspec
+appdirs
+typed-ast
+regex
