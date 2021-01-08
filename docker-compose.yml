@@ -1,0 +1,73 @@
+version: "3"
+
+services:
+  # 0. start sonarqube server
+  # docker-compose up sonarqube
+  sonarqube:
+    image: sonarqube:latest
+    ports:
+      - 9000:9000
+
+  # 1. run tests
+  # use "docker-compose build" to rebuild the image in case of requirements.txt changes
+  # docker-compose run unit-test
+  unit-test:
+    build: ./
+    volumes:
+      - .:/usr/src
+    entrypoint: /usr/src/docker/docker-entrypoint_unit-test.sh
+
+  # docker-compose run examples-test
+  examples-test:
+    build: ./
+    volumes:
+      - .:/usr/src
+    entrypoint: /usr/src/docker/docker-entrypoint_examples-test.sh
+
+  # docker-compose run examples-test-pypi
+  # (with install from pypi)
+  examples-test-pypi:
+    build: ./
+    volumes:
+      - .:/usr/src
+    entrypoint: /usr/src/docker/docker-entrypoint_examples-test_pypi.sh
+
+  # then: 2. run analysis (and parse coverage report from the test)
+  analysis:
+    # docker-compose up analysis
+    image: newtmitch/sonar-scanner:latest
+    volumes:
+      - .:/usr/src
+
+  # runs the browser-based basic animation example
+  # use "docker-compose build" to rebuild the image if necessary
+  # docker-compose up web-animation-basic-example
+  web-animation-basic-example:
+    build: ./
+    volumes:
+      - .:/usr/src
+    ports:
+      - "5000:5000"
+    command: bash -c "pip install -e . && python3 ./exec/basics/run_web_canvas_cs.py"
+
+  # runs the browser-based basic animation example
+  # use "docker-compose build" to rebuild the image if necessary
+  # docker-compose up web-animation-tilemap-simple
+  web-animation-tilemap-simple:
+    build: ./
+    volumes:
+      - .:/usr/src
+    ports:
+      - "5000:5000"
+    command: bash -c "pip install -e . && python3 ./exec/tilemap/tilemap_web_animation.py"
+
+  # runs the browser-based basic animation example
+  # use "docker-compose build" to rebuild the image if necessary
+  # docker-compose up web-animation-tilemap-simple-process
+  web-animation-tilemap-simple-process:
+    build: ./
+    volumes:
+      - .:/usr/src
+    ports:
+      - "5000:5000"
+    command: bash -c "pip install -e . && python3 ./exec/tilemap/process_web_animation.py"

@@ -1,0 +1,12 @@
+simpy
+xmltodict
+Pillow
+flask
+flask-cors
+black==19.3b0
+numpy
+networkx
+
+pytest
+pytest-cov
+twine
