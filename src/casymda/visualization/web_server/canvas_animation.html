@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Casymda Canvas Animation</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://pixijs.download/v5.0.4/pixi.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    
+    <script src="https://unpkg.com/flatbuffers@1.12.0/js/flatbuffers.js"></script>
+    
+    <script type="module" src="lib-files/animation_client.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <hr>
+        <div class="row">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default btn" onclick=start_simulation()>&#9658</button>
+                <button type="button" class="btn btn-default btn" onclick=pause_simulation()>&#10073&#10073</button>
+                <button type="button" class="btn btn-default btn" onclick=resume_simulation()>R</button>
+                <button type="button" class="btn btn-default btn" onclick=stop_simulation()>&#9726</button>
+            </div>
+            <div class="slidecontainer">
+                <input type="range" min="1" max="100" value="1" class="slider" id="speed_slider">
+                <p>real-time factor: <span id="speed_label"></span></p>
+            </div>
+            <hr>
+            <div id="animation_canvas_parent">
+                <!-- pixijs canvas will be placed here -->
+            </div>
+        </div>
+        <hr>
+    </div>
+</body>
+
+</html>

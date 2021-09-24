@@ -1,0 +1,48 @@
+// IDL for web-canvas data
+
+namespace casymda.visualization.web_server.flatbuffers;
+
+table Canvas {
+  content: [Element];
+}
+
+union ElementsUnion { Photo, Image, Text }
+
+table Element {
+  id: ushort;
+  element: ElementsUnion;
+}
+
+table Photo { // caching should be implemented by the canvas/client
+  factor: float = 1;
+  path: string;
+}
+
+table Image { // "PlacedPhoto"
+  position: CanvasPosition;
+  anchor: Anchor;
+  photo_id: ushort;
+  path: string; // needed?
+  factor: float = 1; // needed?
+}
+
+table Text {
+  position: CanvasPosition;
+  anchor: Anchor;
+  text: string;
+  fill: string;
+  font_family: string;
+  font_size: ubyte = 10;
+}
+
+struct CanvasPosition {
+  x: ushort;
+  y: ushort;
+}
+
+struct Anchor {
+  x: float = 0;
+  y: float = 0;
+}
+
+root_type Canvas;

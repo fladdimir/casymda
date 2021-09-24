@@ -1,0 +1,13 @@
+simpy
+xmltodict
+Pillow
+flask
+flask-cors
+black==19.3b0
+numpy
+networkx
+flatbuffers==1.12 # todo: update to 2.x
+
+pytest
+pytest-cov
+twine
