@@ -191,7 +191,7 @@ def _get_offset(xmlo):
     ]:
         # find all bounded elements and include their label bounds
         shape_bounds = [shape["dc:Bounds"]]
-        if "bpmndi:BPMNLabel" in shape:
+        if "bpmndi:BPMNLabel" in shape and shape["bpmndi:BPMNLabel"] is not None:
             shape_bounds.append(shape["bpmndi:BPMNLabel"]["dc:Bounds"])
         for bounds in shape_bounds:
             # look for global min
