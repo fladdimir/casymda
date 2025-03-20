@@ -1,11 +1,11 @@
 import json
 import pathlib
+from functools import reduce
 from operator import sub
 from typing import Dict, List
 
 import black
 import xmltodict
-
 from casymda import __version__
 
 print("casymda version: " + __version__)
@@ -61,6 +61,8 @@ def parse_bpmn(
 
 
 def _generate_model_components(components):
+    names = [c["id_name"] for c in components]
+    _print_duplicates(names)
     return (
         "self.model_components = {"
         + ", ".join(
@@ -71,6 +73,18 @@ def _generate_model_components(components):
         )
         + "}"
     )
+
+
+def _print_duplicates(items):
+    seen = set()
+    dupes = []
+    for x in items:
+        if x in seen:
+            dupes.append(x)
+        else:
+            seen.add(x)
+    for d in dupes:
+        print("\nerror: duplicate block: " + d)
 
 
 def _generate_model_graph_names(elements, components):
@@ -84,8 +98,11 @@ def _generate_model_graph_names(elements, components):
 def _add_class_and_id_names(elements: list):
     for element in elements:
         names = element["@name"].split(":")
-        # add removal of possibly leading/trailing blanks
-        names = [n.strip() for n in names]
+        names = [n.strip() for n in names]  # strip leading/trailing spaces
+        for n in names:
+            if " " in n:
+                print("warn: space in class or instance name (will be removed): " + n)
+        names = [n.replace(" ", "") for n in names]  # remove whitespace
         element["class_name"] = names[0]
         element["id_name"] = names[1]
 
@@ -232,18 +249,20 @@ def _get_shape_xy(elid, xmlo, offset=(0, 0)):
 
 def _get_elements_of_type(bpmn, element_type) -> List[str]:
     process = bpmn["bpmn:definitions"]["bpmn:process"]
+    if isinstance(process, list):  # there might be multiple lanes / processes
+        list_of_lists = map(
+            lambda p: _get_elements_of_type_from_process(p, element_type), process
+        )
+        return [item for list in list_of_lists for item in list]  # flatmap
+    else:
+        return _get_elements_of_type_from_process(process, element_type)
+
+
+def _get_elements_of_type_from_process(process, element_type) -> List[str]:
     if "bpmn:" + element_type in process:
         elements = process["bpmn:" + element_type]
         return elements if isinstance(elements, list) else [elements]
     return []
-
-
-def _contains_resource_relation(component):
-    if ("bpmn:dataInputAssociation" in component) or (
-        "bpmn:dataOutputAssociation" in component
-    ):
-        return True
-    return False
 
 
 def _find_res_id_name(bpmn_id, elements):
@@ -275,11 +294,13 @@ def _get_related_text_annotations(component, elements):
         annotations += [
             annot
             for annot in elements["textAnnotations"]
-            if annot["@id"] == assoc["@targetRef"]
+            if annot["@id"] == assoc["@targetRef"] and "bpmn:text" in annot
         ]
     params = []
     for annot in annotations:
-        params += [x.strip() for x in annot["bpmn:text"].split(";")]
+        params += [
+            x.strip() for x in annot["bpmn:text"].split(";") if len(x.strip()) > 0
+        ]
     text = ""
     if len(params) > 0:
         text = ", " + ", ".join(params)
