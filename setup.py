@@ -29,7 +29,7 @@ setup(
         "Pillow",
         "flask",
         "flask-cors",
-        "black==19.3b0",
+        "black==24.3.0",
         "numpy",
         "networkx",
         "flatbuffers==1.12",
